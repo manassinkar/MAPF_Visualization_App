@@ -2,10 +2,11 @@ from django.shortcuts import render
 from django.shortcuts import render, HttpResponse
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from collections import defaultdict
 
+from collections import defaultdict
 import json
 import os
+from .astar import search
 
 import math
 import numpy as np
@@ -43,7 +44,9 @@ def generate_random_start_end(request):
         start = [random.randint(0,dim-1),random.randint(0,dim-1)]
         end = [random.randint(0,dim-1),random.randint(0,dim-1)]
         if maze[start[0]][start[1]]==1 and maze[end[0]][end[1]]==1:
-            break
+            path = search(maze, 1, start, end)
+            if path!=None:
+                break
     data = {
         "start": start,
         "end": end
@@ -129,12 +132,11 @@ def RemoveLoops(moves):
         s,e = 0,0
         for d in dups:
             rep = d[1]
-            l = len(rep)
-            val = rep[l-1]-rep[0]
+            val = rep[-1]-rep[0]
             if val>m:
                 m = val
                 s = rep[0]
-                e = rep[l-1]
+                e = rep[-1]
         moves = moves[:s] + moves[e:]
         #print("len moves ",len(moves))
     return moves
@@ -149,11 +151,6 @@ def getMaze_And_Path(request):
     # 2.
     start = json.loads(request.data.get("start"))
     end = json.loads(request.data.get("end"))
-
-    #print("yaha tak chala")
-    #f = open("/home/izhan/dev/HERE/demo/demo/demoApp/test.txt", "r")
-    #print(f.read())
-    
 
     d = {0:[-1,0],1:[0,1],2:[1,0],3:[0,-1]}
     moveList = [-1]*11
@@ -176,16 +173,13 @@ def getMaze_And_Path(request):
             temp = current + d[pred]
             if isIndexValid(temp) and isMovePossible(maze,temp):
                 current += d[pred]
-            elif tuple(current) in s:
-                r = 3
-                pred = getRandomMove(maze,current,d,moveList[-1])
-                r-=1
-                current += d[pred]
             else:
                 r = 3
                 pred = getRandomMove(maze,current,d,moveList[-1])
                 r-=1
                 current += d[pred]
+            if tuple(current) in s:
+                r = 2
             val = (inp[0][0][12]-initDist)/initDist
             if val>0.05:
                 moveList = [-1]*11
@@ -196,7 +190,6 @@ def getMaze_And_Path(request):
         s.add(tuple(current))
         moves.append(list(current))
         moveList.append(pred)
-        maze[current[0]][current[1]] = 10
 
     finalMoves = RemoveLoops(moves)
     data = {
