@@ -12,8 +12,6 @@ export default class PathfindingVisualizer extends Component {
     super();
     this.state = {
       grid: [],
-      intial_gird: [],
-      maze_copy: [],
       start: null,
       end: null,
       mouseIsPressed: false,
@@ -28,7 +26,8 @@ export default class PathfindingVisualizer extends Component {
 
   async componentDidMount() {
 
-    const numAgents = 10;
+    const colours = ['Aqua','Blue','Brown','Chocolate','DarkBlue','DarkCyan','DarkGoldenRod','DarkGreen','DarkMagenta','Indigo','OrangeRed','Sienna']
+    const numAgents = 3;
     let response = await axios('http://127.0.0.1:8000/app/maze');
     let initialMaze = response.data.maze;
 
@@ -55,13 +54,17 @@ export default class PathfindingVisualizer extends Component {
     console.log(movesArray.length);
     var result = await Promise.all(movesArray);
     result = result.map(res => { return { start: res.data.start, end: res.data.end, moves: res.data.moves } })
-    let startEndArray = result.map(agent => { return { start: agent.start, end: agent.end } })
+
+    for(i=0;i<result.length;i++)
+    {
+      result[i]['colour'] = colours[i];
+    }
+
     console.log("result ",result);
 
     const stateObject = {
       grid: initialMaze,
       agents: result,
-      startEndArray: startEndArray
     }
     // console.log(stateObject)
 
@@ -84,27 +87,27 @@ export default class PathfindingVisualizer extends Component {
     this.setState({mouseIsPressed: false});
   }
 
-  animateDijkstra(visitedNodesInOrder) {
+  animateDijkstra(visitedNodesInOrder,colour) {
     for (let i = 0; i < visitedNodesInOrder.length; i++) {
-      if(i===0)
+      const node = visitedNodesInOrder[i];
+
+      if(i!==visitedNodesInOrder.length-1)
       {
-        const start = visitedNodesInOrder[i];
-        document.getElementById(`node-${start.row}-${start.col}`).className =
-          'node node-visited';
-      }
-      else
-      {
-        const prev = visitedNodesInOrder[i-1];
-        const node = visitedNodesInOrder[i];
+        var time = 120*i;
+        if(i==0)
+        {
+          time = 120;
+        }
         setTimeout(() => {
-          document.getElementById(`node-${prev.row}-${prev.col}`).className =
-            'node';
-        }, 1200 * i);
-        setTimeout(() => {
-          document.getElementById(`node-${node.row}-${node.col}`).className =
-            'node node-visited';
-        }, 1000 * i);
+          var el = document.getElementById(`node-${node.row}-${node.col}`)
+          el.style.backgroundColor = 'white';
+        }, time);
       }
+
+      setTimeout(() => {
+        var el = document.getElementById(`node-${node.row}-${node.col}`)
+        el.style.backgroundColor = colour;
+      }, 100 * i);
     }
   }
 
@@ -126,11 +129,12 @@ export default class PathfindingVisualizer extends Component {
       {
         let s = agent.start;
         let e = agent.end;
+        let c = agent.colour;
         const startNode = grid[s[0]][s[1]];
         const finishNode = grid[e[0]][e[1]];
         const m = agent.moves;
         const visitedNodesInOrder = dijkstra(grid, startNode, finishNode, m);
-        this.animateDijkstra(visitedNodesInOrder);
+        this.animateDijkstra(visitedNodesInOrder,c);
       })
   }
 
@@ -193,11 +197,10 @@ const getInitialGrid = (drawGrid,state) => {
     }
     grid.push(currentRow);
   }
-  const startEndArray = state.startEndArray;
-  startEndArray.forEach(startEnd =>
+  state.agents.forEach(agent =>
     {
-      let s = startEnd.start;
-      let e = startEnd.end
+      let s = agent.start;
+      let e = agent.end
       grid[s[0]][s[1]].isStart = true;
       grid[e[0]][e[1]].isFinish = true;
     })
