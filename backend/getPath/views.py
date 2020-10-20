@@ -38,6 +38,7 @@ def generate_random_start_end(request):
     print("start end API called")
     start = [0, 0] # starting position
     end = [4,5] # ending position
+    path = None
     #print("post ", request.data)
     maze = json.loads(request.data.get("maze"))
     while True:
@@ -49,7 +50,8 @@ def generate_random_start_end(request):
                 break
     data = {
         "start": start,
-        "end": end
+        "end": end,
+        "length": path[end[0]][end[1]]
     }
     return Response(data)
 
