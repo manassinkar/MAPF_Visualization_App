@@ -86,15 +86,15 @@ const createNode = (col, row, start, finish) => {
   return neighbors.filter(neighbor => !neighbor.isVisited);
 } */
 
-function getAllNodes(grid) {
-  const nodes = [];
-  for (const row of grid) {
-    for (const node of row) {
-      nodes.push(node);
-    }
-  }
-  return nodes;
-}
+// function getAllNodes(grid) {
+//   const nodes = [];
+//   for (const row of grid) {
+//     for (const node of row) {
+//       nodes.push(node);
+//     }
+//   }
+//   return nodes;
+// }
 
 // Backtracks from the finishNode to find the shortest path.
 // Only works when called *after* the dijkstra method above.

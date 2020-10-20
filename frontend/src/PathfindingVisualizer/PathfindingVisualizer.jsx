@@ -3,15 +3,9 @@ import Node from './Node/Node';
 import axios from 'axios';
 import { dijkstra /* getNodesInShortestPathOrder */} from '../algorithms/dijkstra';
 import '../App.css';
-import Cookies from 'js-cookie';
 
 
 import './PathfindingVisualizer.css';
-
-let START_NODE_ROW = 0;
-let START_NODE_COL = 0;
-let FINISH_NODE_ROW = 1;
-let FINISH_NODE_COL = 1;
 
 export default class PathfindingVisualizer extends Component {
   constructor() {
@@ -34,7 +28,7 @@ export default class PathfindingVisualizer extends Component {
 
   async componentDidMount() {
 
-    const numAgents = 2;
+    const numAgents = 10;
     let response = await axios('http://127.0.0.1:8000/app/maze');
     let initialMaze = response.data.maze;
 
@@ -44,13 +38,14 @@ export default class PathfindingVisualizer extends Component {
         maze: JSON.stringify(initialMaze)
       },{headers: {'Content-Type': 'application/json'}}));
     }
-    const startEndData = await Promise.all(startEndPromiseArray);
+    var startEndData = await Promise.all(startEndPromiseArray);
+    startEndData = startEndData.map(elem => { return { start: elem.data.start,end: elem.data.end } })
     console.log("startend data ",startEndData);
 
     let movesArray = [];
     startEndData.forEach(element => {
-      let s = element.data.start;
-      let e = element.data.end;
+      let s = element.start;
+      let e = element.end;
       movesArray.push(axios.post('http://127.0.0.1:8000/', {
         maze: JSON.stringify(initialMaze),
         start: JSON.stringify(s),
@@ -58,21 +53,20 @@ export default class PathfindingVisualizer extends Component {
       },{headers: {'Content-Type': 'application/json'}}));
     })
     console.log(movesArray.length);
-    const result = await Promise.all(movesArray);
+    var result = await Promise.all(movesArray);
+    result = result.map(res => { return { start: res.data.start, end: res.data.end, moves: res.data.moves } })
+    let startEndArray = result.map(agent => { return { start: agent.start, end: agent.end } })
     console.log("result ",result);
 
-    /* let result = await axios.post('http://127.0.0.1:8000/', {
-      maze: JSON.stringify(initialMaze),
-      start: JSON.stringify(cordArray.data.start),
-      end: JSON.stringify(cordArray.data.end)
-    },{headers: {'Content-Type': 'application/json'}}) */
+    const stateObject = {
+      grid: initialMaze,
+      agents: result,
+      startEndArray: startEndArray
+    }
+    // console.log(stateObject)
 
-    /* this.setState({maze_copy: result.data.maze_copy,
-                      grid: result.data.maze_copy,
-                      start: result.data.start,
-                      end: result.data.end,
-                      moves: result.data.moves}) */
-    //const grid = getInitialGrid();
+    await this.setState(stateObject)
+    // const grid = getInitialGrid();
   }
 
   handleMouseDown(row, col) {
@@ -90,19 +84,27 @@ export default class PathfindingVisualizer extends Component {
     this.setState({mouseIsPressed: false});
   }
 
-  animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder) {
-    for (let i = 0; i <= visitedNodesInOrder.length; i++) {
-      if (i === visitedNodesInOrder.length) {
-        setTimeout(() => {
-          this.animateShortestPath(nodesInShortestPathOrder);
-        }, 10 * i);
-        return;
-      }
-      setTimeout(() => {
-        const node = visitedNodesInOrder[i];
-        document.getElementById(`node-${node.row}-${node.col}`).className =
+  animateDijkstra(visitedNodesInOrder) {
+    for (let i = 0; i < visitedNodesInOrder.length; i++) {
+      if(i===0)
+      {
+        const start = visitedNodesInOrder[i];
+        document.getElementById(`node-${start.row}-${start.col}`).className =
           'node node-visited';
-      }, 10 * i);
+      }
+      else
+      {
+        const prev = visitedNodesInOrder[i-1];
+        const node = visitedNodesInOrder[i];
+        setTimeout(() => {
+          document.getElementById(`node-${prev.row}-${prev.col}`).className =
+            'node';
+        }, 1200 * i);
+        setTimeout(() => {
+          document.getElementById(`node-${node.row}-${node.col}`).className =
+            'node node-visited';
+        }, 1000 * i);
+      }
     }
   }
 
@@ -116,37 +118,24 @@ export default class PathfindingVisualizer extends Component {
     }
   }
 
-  /* visualizeDijkstra() {
-    const {grid} = this.state.mo;
-    const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-    const visitedNodesInOrder = dijkstra(grid, startNode, finishNode);
-    const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-    this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder);
-  } */
-
   visualizePath() {
-    console.log(this.state.moves);
+    // console.log(this.state.moves);
     const grid = this.state.grid;
-    const startNode = grid[START_NODE_ROW][START_NODE_COL];
-    const finishNode = grid[FINISH_NODE_ROW][FINISH_NODE_COL];
-    console.log("s and f: ", startNode, finishNode);
-    const m = this.state.moves;
-    const visitedNodesInOrder = dijkstra(grid, startNode, finishNode, m);
-    console.log("visi in order", visitedNodesInOrder[0]);
-    console.log(visitedNodesInOrder[visitedNodesInOrder.length - 1]);
-    //const nodesInShortestPathOrder = getNodesInShortestPathOrder(finishNode);
-    this.animateDijkstra(visitedNodesInOrder, visitedNodesInOrder);
+    const agents = this.state.agents;
+    agents.forEach(agent =>
+      {
+        let s = agent.start;
+        let e = agent.end;
+        const startNode = grid[s[0]][s[1]];
+        const finishNode = grid[e[0]][e[1]];
+        const m = agent.moves;
+        const visitedNodesInOrder = dijkstra(grid, startNode, finishNode, m);
+        this.animateDijkstra(visitedNodesInOrder);
+      })
   }
 
   setInitialGrid = (draw) => {
-    let s = this.state.start;
-    let e = this.state.end;
-    START_NODE_ROW = s[0];
-    START_NODE_COL = s[1];
-    FINISH_NODE_ROW = e[0];
-    FINISH_NODE_COL = e[1];
-    const grid = getInitialGrid(draw);
+    const grid = getInitialGrid(draw,this.state);
     this.setState({grid: grid});
   }
 
@@ -157,7 +146,7 @@ export default class PathfindingVisualizer extends Component {
       <div className="App">
         <button onClick={() => this.visualizePath()} style={{marginLeft:"520px"}}>
           Visualize Path!!
-        </button><button style={{marginLeft:"0px"}} onClick={() => this.setInitialGrid(this.state.grid)} style={{marginLeft:"520px"}}>
+        </button><button onClick={() => this.setInitialGrid(this.state.grid)} style={{marginLeft:"520px"}}>
           getInitialGrid with obstacles
         </button>
         <div className="grid">
@@ -191,7 +180,7 @@ export default class PathfindingVisualizer extends Component {
   }
 }
 
-const getInitialGrid = (drawGrid) => {
+const getInitialGrid = (drawGrid,state) => {
   const grid = [];
   for (let row = 0; row < 50; row++) {
     const currentRow = [];
@@ -204,6 +193,14 @@ const getInitialGrid = (drawGrid) => {
     }
     grid.push(currentRow);
   }
+  const startEndArray = state.startEndArray;
+  startEndArray.forEach(startEnd =>
+    {
+      let s = startEnd.start;
+      let e = startEnd.end
+      grid[s[0]][s[1]].isStart = true;
+      grid[e[0]][e[1]].isFinish = true;
+    })
   return grid;
 };
 
@@ -211,8 +208,8 @@ const createNode = (col, row, obstacle) => {
   return {
     col,
     row,
-    isStart: row === START_NODE_ROW && col === START_NODE_COL,
-    isFinish: row === FINISH_NODE_ROW && col === FINISH_NODE_COL,
+    isStart: false,
+    isFinish: false,
     distance: Infinity,
     isVisited: false,
     isWall: obstacle,
