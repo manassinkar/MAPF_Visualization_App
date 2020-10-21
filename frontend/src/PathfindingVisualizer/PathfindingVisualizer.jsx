@@ -24,7 +24,7 @@ export default class PathfindingVisualizer extends Component {
   async componentDidMount() {
 
     const colours = ['Aqua','Blue','Brown','Chocolate','DarkBlue','DarkCyan','DarkGoldenRod','DarkGreen','DarkMagenta','Indigo','OrangeRed','Sienna','Red','Green','BlueViolet','CornflowerBlue','Crimson','DarkGray','DeepPink','Fuchsia']
-    const numAgents = colours.length;
+    const numAgents = 10;
     let response = await axios('http://127.0.0.1:8000/app/maze');
     let initialMaze = response.data.maze;
 
@@ -119,12 +119,12 @@ export default class PathfindingVisualizer extends Component {
 
   makeMove(node,i,ci,maxLen,colour)
   {
-    if(ci!==maxLen)
+    if(ci!==maxLen-1)
     {
-      var time = 120*i;
+      var time = 100*i + 50;
       if(i===0)
       {
-        time = 120;
+        time = 50;
       }
       setTimeout(() => {
         var el = document.getElementById(`node-${node.row}-${node.col}`)
@@ -152,10 +152,8 @@ export default class PathfindingVisualizer extends Component {
     return true;
   }
 
-  async visualizePath() {
-    // console.log(this.state.moves);
-    const grid = this.state.grid;
-    var agents = this.state.agents;
+  updateAgents(agents,grid)
+  {
     for(var i=0;i<agents.length;i++)
     {
       let s = agents[i].start;
@@ -166,86 +164,115 @@ export default class PathfindingVisualizer extends Component {
       const visitedNodesInOrder = dijkstra(grid, startNode, finishNode, m);
       agents[i]['visitedNodesInOrder'] = visitedNodesInOrder;
       agents[i]['waitTime'] = 0;
-      agents[i]['currMovesIndex'] = 0;
+      agents[i]['currMovesIndex'] = 1;
     }
-    await agents.forEach((agent,idx) =>
-      {
-        var node = agent['visitedNodesInOrder'][agent['currMovesIndex']];
-        var l = agent['visitedNodesInOrder'].length;
-        var colour = agent['colour'];
-        this.makeMove(node,0,0,l,colour);
-        agents[idx]['currMovesIndex'] += 1;
-      })
+    return agents;
+  }
 
-    i = 0;
+  async makeFirstMove(agents)
+  {
+    await agents.forEach((agent) =>
+    {
+      var node = agent['visitedNodesInOrder'][agent['currMovesIndex']-1];
+      var l = agent['visitedNodesInOrder'].length;
+      var colour = agent['colour'];
+      this.makeMove(node,0,0,l,colour);
+    })
+  }
+
+  getNextMoves(agents)
+  {
+    var nextNodes = agents.map(agent => {
+      if(agent['currMovesIndex']<agent['visitedNodesInOrder'].length)
+      {
+        return agent['visitedNodesInOrder'][agent['currMovesIndex']];
+      }
+      return null;
+    });
+    var nextMoves = nextNodes.map(node => {
+      if(node!==null)
+      {
+        return { row: node.row, col: node.col }
+      }
+      return null;
+    });
+    return nextMoves;
+  }
+
+  async updateAgentsWaitStatus(nextMoves,agents)
+  {
+    var set = [];
+    let r = 0,c = 0;
+    const func = (item) => { return item['row'] === r && item['col'] === c }
+    for(var j=0;j<nextMoves.length;j++)
+    {
+      if(agents[j]['waitTime']===0 && nextMoves[j]!==null)
+      {
+        r = nextMoves[j]['row'];
+        c = nextMoves[j]['col'];
+        var f = await set.filter(func)
+        // console.log(r,c,f,set);
+        if(f.length === 0)
+        {
+          set.push(nextMoves[j])
+        }
+        else
+        {
+          agents[j]['waitTime'] = 2;
+        }
+      }
+    }
+    return agents;
+  }
+
+  makeNextIteration(agents,i)
+  {
+    for(var k=0;k<agents.length;k++)
+    {
+      var currIdx = agents[k]['currMovesIndex'];
+      var l = agents[k]['visitedNodesInOrder'].length
+      var node = null;
+      var colour = '';
+      if(agents[k]['waitTime']>0)
+      {
+        if(currIdx<l)
+        {
+          node = agents[k]['visitedNodesInOrder'][currIdx];
+          colour = 'Black';
+          console.log("Waiting");
+          this.makeMove(node,i,currIdx,l,colour);
+        }
+        agents[k]['waitTime'] -= 1;
+      }
+      else
+      {
+        if(currIdx<l)
+        {
+          node = agents[k]['visitedNodesInOrder'][currIdx];
+          colour = agents[k]['colour'];
+          this.makeMove(node,i,currIdx,l,colour);
+          agents[k]['currMovesIndex'] += 1;
+        }
+      }
+    }
+  }
+
+  async visualizePath() {
+    // console.log(this.state.moves);
+    const grid = this.state.grid;
+    var agents = this.state.agents;
+    agents = this.updateAgents(agents,grid);
+    await this.makeFirstMove(agents);
+    var i = 0;
     while(true)
     {
       if(this.isDone(agents)===true)
       {
         break;
       }
-      var nextNodes = agents.map(agent => {
-        if(agent['currMovesIndex']<agent['visitedNodesInOrder'].length)
-        {
-          return agent['visitedNodesInOrder'][agent['currMovesIndex']];
-        }
-        return null;
-      });
-      var nextMoves = nextNodes.map(node => {
-        if(node!==null)
-        {
-          return { row: node.row, col: node.col }
-        }
-        return null;
-      });
-      var set = [];
-      let r = 0,c = 0;
-      for(var j=0;j<nextMoves.length;j++)
-      {
-        if(agents[j]['waitTime']===0 && nextMoves[j]!==null)
-        {
-          r = nextMoves[j]['row'];
-          c = nextMoves[j]['col'];
-          var f = await set.filter(item => item['row'] === r && item['col'] === c )
-          // console.log(r,c,f,set);
-          if(f.length === 0)
-          {
-            set.push(nextMoves[j])
-          }
-          else
-          {
-            agents[j]['waitTime'] = 2;
-          }
-        }
-      }
-      for(var k=0;k<agents.length;k++)
-      {
-        var currIdx = agents[k]['currMovesIndex'];
-        var l = agents[k]['visitedNodesInOrder'].length
-        var node = null;
-        var colour = '';
-        if(agents[k]['waitTime']>0)
-        {
-          if(currIdx<l)
-          {
-            node = agents[k]['visitedNodesInOrder'][currIdx];
-            colour = 'Black';
-            console.log("Waiting");
-            this.makeMove(node,i,currIdx,l,colour);
-          }
-          agents[k]['waitTime'] -= 1;
-        }
-        else
-        {
-          if(currIdx<l)
-          {
-            node = agents[k]['visitedNodesInOrder'][currIdx];
-            colour = agents[k]['colour'];
-            this.makeMove(node,i,currIdx,l,colour);
-            agents[k]['currMovesIndex'] += 1;
-          }
-        }
-      }
+      var nextMoves = await this.getNextMoves(agents);
+      agents = await this.updateAgentsWaitStatus(nextMoves,agents);
+      this.makeNextIteration(agents,i);
       i++;
     }
   }
