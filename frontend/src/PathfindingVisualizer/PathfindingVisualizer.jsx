@@ -287,15 +287,17 @@ export default class PathfindingVisualizer extends Component {
 
     return (
       <div className="App">
-        <button disabled={!this.state.agents} onClick={() => this.visualizePath()} style={{marginLeft:"520px"}}>
-          Visualize Path!!
-        </button><button disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)} style={{marginLeft:"520px"}}>
-          getInitialGrid with obstacles
-        </button>
+        <div>
+           <button disabled={!this.state.agents} onClick={() => this.visualizePath()} style={{marginLeft:"520px"}}>
+             Visualize Path!!
+           </button><button disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)} style={{marginLeft:"520px"}}>
+             getInitialGrid with obstacles
+           </button>
+        </div>
         <div className="grid">
           {grid.map((row, rowIdx) => {
             return (
-              <div key={rowIdx}>
+              <div className="gridCell" key={rowIdx}>
                 {row.map((node, nodeIdx) => {
                   const {row, col, isFinish, isStart, isWall} = node;
                   return (

@@ -1,0 +1,17 @@
+.logo img {
+    height: 50px;
+    width: auto;
+}
+
+.logo {
+    padding-top: 15px;
+    -webkit-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+    height: 80px;
+}
+
+.menu-bg .logo {
+    padding-top: 10px;
+    -webkit-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+}

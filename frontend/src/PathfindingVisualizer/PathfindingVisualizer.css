@@ -2,6 +2,16 @@
   margin: 100px 0 0;
 }
 
+.formContent {
+  height: 200px;
+  width: 500px;
+  margin: 50px;
+}
+
+.gridCell {
+  padding: 0%;
+  margin: 0%;
+}
 .s {
   justify-content: center;
   margin-left: auto;
