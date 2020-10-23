@@ -16,6 +16,7 @@ import About from './pages/About';
 import Services from './pages/Service';
 import Contact from './pages/Contact';
 import SignUp from './pages/SignUp';
+import Footer from './pages/Footer';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
         <Route path='/contact-us' component={Contact} />
         <Route path='/sign-up' component={SignUp} />
       </Switch>
+      <Footer />
     </Router>
   );
 }
