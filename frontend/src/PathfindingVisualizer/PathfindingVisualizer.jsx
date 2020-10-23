@@ -13,74 +13,8 @@ export default class PathfindingVisualizer extends Component {
       start: null,
       end: null,
       mouseIsPressed: false,
+      numAgents: 1
     };
-  }
-
-  printData(){
-    console.log("print data");
-    console.log(this.state);
-  }
-
-  async componentDidMount() {
-
-    const colours = ['Aqua','Blue','Brown','Chocolate','DarkBlue','DarkCyan','DarkGoldenRod','DarkGreen','DarkMagenta','Indigo','OrangeRed','Sienna','Red','Green','BlueViolet','CornflowerBlue','Crimson','DarkGray','DeepPink','Fuchsia']
-    const numAgents = 10;
-    let response = await axios('http://127.0.0.1:8000/app/maze');
-    let initialMaze = response.data.maze;
-
-    let startEndPromiseArray = [];
-    for(var i=0; i<numAgents; i++){
-      startEndPromiseArray.push(axios.post('http://127.0.0.1:8000/app/startend/', {
-        maze: JSON.stringify(initialMaze)
-      },{headers: {'Content-Type': 'application/json'}}));
-    }
-    var startEndData = await Promise.all(startEndPromiseArray);
-    startEndData = startEndData.map(elem => { return { start: elem.data.start,end: elem.data.end, length: elem.data.length } });
-    let astarLength = startEndData.map(elem => { return elem.length })
-    console.log("startend data ",startEndData);
-
-    let movesArray = [];
-    startEndData.forEach(element => {
-      let s = element.start;
-      let e = element.end;
-      movesArray.push(axios.post('http://127.0.0.1:8000/', {
-        maze: JSON.stringify(initialMaze),
-        start: JSON.stringify(s),
-        end: JSON.stringify(e)
-      },{headers: {'Content-Type': 'application/json'}}));
-    })
-    console.log(movesArray.length);
-    var result = await Promise.all(movesArray);
-    result = result.map(res => { return { start: res.data.start, end: res.data.end, moves: res.data.moves } });
-    let resultLength = result.map(res => { return res.moves.length });
-
-    var sum = 0;
-    for(i=0;i<numAgents;i++)
-    {
-      sum += resultLength[i] - astarLength[i];
-    }
-    console.log("On an average it is taking",sum/numAgents,"extra moves by our solution with respect to astar algorithm individually");
-
-    for(i=0;i<result.length;i++)
-    {
-      result[i]['colour'] = colours[i];
-    }
-
-    console.log("result ",result);
-
-    const stateObject = {
-      grid: initialMaze,
-      agents: result,
-    }
-    // console.log(stateObject)
-
-    await this.setState(stateObject)
-    // const grid = getInitialGrid();
-  }
-
-  handleMouseDown(row, col) {
-    const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-    this.setState({grid: newGrid, mouseIsPressed: true});
   }
 
   handleMouseEnter(row, col) {
@@ -121,10 +55,10 @@ export default class PathfindingVisualizer extends Component {
   {
     if(ci!==maxLen-1)
     {
-      var time = 100*i + 50;
+      var time = 200*i + 100;
       if(i===0)
       {
-        time = 50;
+        time = 100;
       }
       setTimeout(() => {
         var el = document.getElementById(`node-${node.row}-${node.col}`)
@@ -135,7 +69,7 @@ export default class PathfindingVisualizer extends Component {
     setTimeout(() => {
       var el = document.getElementById(`node-${node.row}-${node.col}`)
       el.style.backgroundColor = colour;
-    }, 100 * i);
+    }, 200 * i);
   }
 
   isDone(agents)
@@ -277,23 +211,142 @@ export default class PathfindingVisualizer extends Component {
     }
   }
 
+  async makeApiCalls() {
+    /* const colours = ['Aqua','Blue','Brown','Chocolate','DarkBlue','DarkCyan','DarkGoldenRod','DarkGreen','DarkMagenta','Indigo','OrangeRed','Sienna','Red','Green','BlueViolet','CornflowerBlue','Crimson','DarkGray','DeepPink','Fuchsia']
+    const numAgents = this.state.numAgents;
+    let response = await axios('http://127.0.0.1:8000/app/maze');
+    let initialMaze = response.data.maze;
+
+    let startEndPromiseArray = [];
+    for(var i=0; i<numAgents; i++){
+      startEndPromiseArray.push(axios.post('http://127.0.0.1:8000/app/startend/', {
+        maze: JSON.stringify(initialMaze)
+      },{headers: {'Content-Type': 'application/json'}}));
+    }
+    var startEndData = await Promise.all(startEndPromiseArray);
+    startEndData = startEndData.map(elem => { return { start: elem.data.start,end: elem.data.end, length: elem.data.length } });
+    let astarLength = startEndData.map(elem => { return elem.length })
+    console.log("startend data ",startEndData);
+
+    let movesArray = [];
+    startEndData.forEach(element => {
+      let s = element.start;
+      let e = element.end;
+      movesArray.push(axios.post('http://127.0.0.1:8000/', {
+        maze: JSON.stringify(initialMaze),
+        start: JSON.stringify(s),
+        end: JSON.stringify(e)
+      },{headers: {'Content-Type': 'application/json'}}));
+    })
+    console.log(movesArray.length);
+    var result = await Promise.all(movesArray);
+    result = result.map(res => { return { start: res.data.start, end: res.data.end, moves: res.data.moves } });
+    let resultLength = result.map(res => { return res.moves.length });
+
+    var sum = 0;
+    for(i=0;i<numAgents;i++)
+    {
+      sum += resultLength[i] - astarLength[i];
+    }
+    console.log("On an average it is taking",sum/numAgents,"extra moves by our solution with respect to astar algorithm individually");
+
+    for(i=0;i<result.length;i++)
+    {
+      result[i]['colour'] = colours[i];
+    }
+
+    console.log("result ",result);
+ */
+    let numberOfAgents = this.state.numAgents;
+    let statesAll = require('./statesAll.json');
+    let stateList = statesAll[numberOfAgents];
+    let r = Math.round(Math.random() * 4);
+    const stateObject = stateList[r];
+    console.log("random index ", r);
+    console.log("state object ", stateObject);
+
+    /* let stateList = require('./states.json');
+    let r = Math.round(Math.random() * 29);
+    const stateObject = stateList[r];
+    console.log("LENGTH ",stateObject.agents.length); */
+    /* const stateObject = {
+      grid: initialMaze,
+      agents: result,
+    } */
+    // console.log(stateObject)
+
+    await this.setState(stateObject);
+
+  }
+
+  async componentDidMount() {
+    this.makeApiCalls();
+    // const grid = getInitialGrid();
+  }
+
+  handleMouseDown(row, col) {
+    const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+    this.setState({grid: newGrid, mouseIsPressed: true});
+  }
+
   setInitialGrid = (draw) => {
     const grid = getInitialGrid(draw,this.state);
     this.setState({grid: grid});
   }
 
+  handleFormSubmit = (event) => {
+    event.preventDefault();
+    this.makeApiCalls();
+  }
+
   render() {
     const {grid, mouseIsPressed} = this.state;
-
     return (
       <div className="App">
+        <div className="formParentDiv">
+          <form className="ui form formClass" onSubmit={this.handleFormSubmit}>
+            <div className="field">
+              <label>Agents</label>
+              <input type="number" 
+                    name="num-agents" 
+                    placeholder="Number of agents"
+                    onChange={e => this.setState({numAgents: e.target.value})}
+                    />
+            </div>
+          <button className="ui blue button"
+                  type="submit"
+                  value={this.state.numAgents}
+                  >{this.state.numAgents}</button>
+          </form>
+
+          {/* CARD COMPONENT ADJACENT TO FORM */}
+          <div className="cardClass">
+            <div className="ui card">
+              <div className="content">
+                <div className="header">How it works!!</div>
+                <div className="meta"></div>
+                <div className="description">
+                  <p>If you want to provide the number of agents by yourself then you can do it.</p>
+                  <p>Just fill the input and press submit button.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div>
-           <button disabled={!this.state.agents} onClick={() => this.visualizePath()} style={{marginLeft:"520px"}}>
+      </div>
+      
+
+      <div className="buttonClass">
+            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.visualizePath()} style={{marginLeft:"410px"}}>
              Visualize Path!!
-           </button><button disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)} style={{marginLeft:"520px"}}>
+           </button>
+           <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)} style={{marginLeft:"5px"}}>
              getInitialGrid with obstacles
            </button>
-        </div>
+      </div>
+
+
         <div className="grid">
           {grid.map((row, rowIdx) => {
             return (
