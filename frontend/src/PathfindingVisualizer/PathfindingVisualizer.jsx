@@ -302,7 +302,23 @@ export default class PathfindingVisualizer extends Component {
   render() {
     const {grid, mouseIsPressed} = this.state;
     return (
-      <div className="App">
+      <div className="App row">
+        
+        <div className="column">
+
+        <div className="cardClass">
+            <div className="ui card">
+              <div className="content">
+                <div className="header">Path Finding Visualizer!!</div>
+                <div className="meta"></div>
+                <div className="description">
+                  <p>This is a path finding visualizer for multiple agents where every agent is trained using our Deep Learning Model to find the shortest route till the destination!</p>
+                  <p>Just enter the number of Agents in the box and press the visualize button.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
         <div className="formParentDiv">
           <form className="ui form formClass" onSubmit={this.handleFormSubmit}>
             <div className="field">
@@ -318,21 +334,11 @@ export default class PathfindingVisualizer extends Component {
                   value={this.state.numAgents}
                   >{this.state.numAgents}</button>
           </form>
-
-          {/* CARD COMPONENT ADJACENT TO FORM */}
-          <div className="cardClass">
-            <div className="ui card">
-              <div className="content">
-                <div className="header">How it works!!</div>
-                <div className="meta"></div>
-                <div className="description">
-                  <p>If you want to provide the number of agents by yourself then you can do it.</p>
-                  <p>Just fill the input and press submit button.</p>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
+          
+
+
+    
         <div>
       </div>
       
@@ -346,8 +352,8 @@ export default class PathfindingVisualizer extends Component {
            </button>
       </div>
 
-
-        <div className="grid">
+      </div>
+        <div className="grid column">
           {grid.map((row, rowIdx) => {
             return (
               <div className="gridCell" key={rowIdx}>

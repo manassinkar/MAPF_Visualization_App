@@ -1,23 +1,22 @@
 .grid {
   margin: 20px 0 0;
 }
+
 .formParentDiv {
   display: flex;
-  width: 80%;
+  width: 100%;
 }
 
 .formClass {
   height: 200px;
-  width: 80%;
-  margin-top: 40px;
-  margin-bottom: 20px;
-  margin-right: 100px;
-  margin-left: 240px;
+  width: 60%;
+  margin: auto;
 }
 
 .cardClass {
   margin: 50px 50px; 
-  height: 150px;
+  width: 100%;
+  text-align: center;
 }
 
 .buttonClass {
@@ -32,4 +31,17 @@
 .s {
   justify-content: center;
   margin-left: auto;
+}
+
+.column {
+  float: left;
+  width: 50%;
+
+}
+
+/* Clear floats after the columns */
+.row:after {
+  content: "";
+  display: table;
+  clear: both;
 }
