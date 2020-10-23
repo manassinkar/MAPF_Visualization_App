@@ -307,7 +307,8 @@ export default class PathfindingVisualizer extends Component {
         <div className="column">
 
         <div className="cardClass">
-            <div className="ui card">
+            <div className="ui card" style={{margin: "0px 0px 0px 0px", 
+  width: "80%", textAlign: "center"}}>
               <div className="content">
                 <div className="header">Path Finding Visualizer!!</div>
                 <div className="meta"></div>
