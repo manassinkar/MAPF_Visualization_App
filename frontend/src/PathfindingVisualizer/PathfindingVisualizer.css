@@ -11,18 +11,17 @@
   height: 200px;
   width: 60%;
   margin: auto;
+  margin-bottom: -20px;
 }
 
 .cardClass {
-  margin: 50px 200px 50px 100px; 
+  margin: 50px 50px 50px 100px; 
   width: 100%;
   text-align: center;
 }
 
 .buttonClass {
-  margin-top: -50px;
-  text-align: center;
-  display: flex;
+  margin: 0px;
 }
 
 .gridCell {

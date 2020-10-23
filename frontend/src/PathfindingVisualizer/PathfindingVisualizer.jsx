@@ -338,10 +338,10 @@ export default class PathfindingVisualizer extends Component {
         </div>
       
       <div className="buttonClass">
-            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)} style={{marginLeft:"30%", marginTop: "0px"}}>
+            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)} >
              Get the Grid!
            </button>
-            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.visualizePath()} style={{marginLeft:"5px"}} >
+            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.visualizePath()} style={{ marginLeft: "10px"}}>
              Visualize Path!
            </button>
         
