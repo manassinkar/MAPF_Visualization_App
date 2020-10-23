@@ -313,7 +313,7 @@ export default class PathfindingVisualizer extends Component {
                 <div className="meta"></div>
                 <div className="description">
                   <p>This is a path finding visualizer for multiple agents where every agent is trained using our Deep Learning Model to find the shortest route till the destination!</p>
-                  <p>Just enter the number of Agents in the box and press the visualize button.</p>
+                  <p>Just enter the number of Agents in the box and press the button below, get the grid by pressing 'Get the Grid Button' and then click on 'Visualize Path!' and have fun! </p>
                 </div>
               </div>
             </div>
@@ -335,21 +335,15 @@ export default class PathfindingVisualizer extends Component {
                   >{this.state.numAgents}</button>
           </form>
         </div>
-          
-
-
-    
-        <div>
-      </div>
       
-
       <div className="buttonClass">
-            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.visualizePath()} style={{marginLeft:"410px"}}>
-             Visualize Path!!
+            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)} style={{marginLeft:"30%", marginTop: "0px"}}>
+             Get the Grid!
            </button>
-           <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)} style={{marginLeft:"5px"}}>
-             getInitialGrid with obstacles
+            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.visualizePath()} style={{marginLeft:"5px"}} >
+             Visualize Path!
            </button>
+        
       </div>
 
       </div>
