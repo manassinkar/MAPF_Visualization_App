@@ -323,7 +323,17 @@ export default class PathfindingVisualizer extends Component {
               <input type="number" 
                     name="num-agents" 
                     placeholder="Number of agents"
-                    onChange={e => this.setState({numAgents: e.target.value})}
+                    onChange={e => {
+                      let val =  e.target.value;
+                      if(val<1 || val>20)
+                      {
+                        console.log("Test FormSubmit",this.formSubmit);
+                      }
+                      else
+                      {
+                        this.setState({numAgents: val})
+                      }
+                    }}
                     />
             </div>
           <button className="ui blue button"

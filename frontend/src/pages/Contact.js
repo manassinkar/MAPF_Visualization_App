@@ -14,7 +14,7 @@ const Contact = () => {
     >
       
       <div>
-          <iframe title="SPIT" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3769.645933604433!2d72.8339213495!3d19.123182655395826!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c9d90e067ba9%3A0x16268e5d6bca2e6a!2z4Kat4Ka-4Kah4Ka84Ka-4Kaf4Ka_4Kav4Ka84Ka-IOCmrOCmv-CmpuCnjeCmr-CmviDgpq3gpqzgpqjgprgg4Ka44Kaw4KeN4Kam4Ka-4KawIOCmquCnjeCmr-CmvuCmn-Cnh-CmsiDgpofgpqjgprjgp43gpp_gpr_gpp_gpr_gpongpp8g4KaF4KatIOCmn-Cnh-CmleCmqOCni-CmsuCmnOCmvw!5e0!3m2!1sbn!2sin!4v1603279038219!5m2!1sbn!2sin"
+          <iframe title="SPIT" src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3769.6459336030325!2d72.83392671483827!3d19.12318265545724!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be7c9d90e067ba9%3A0x16268e5d6bca2e6a!2sBharatiya%20Vidya%20Bhavan&#39;s%20Sardar%20Patel%20Institute%20of%20Technology!5e0!3m2!1sen!2sin!4v1603525174512!5m2!1sen!2sin"
       width="600" height="450" frameborder="0" style={{border:"border:0"}} allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
       </div>
   
@@ -39,7 +39,7 @@ const Contact = () => {
                                         <div className="input-group-prepend">
                                             <div className="input-group-text"><i className="fa fa-user text-info"></i></div>
                                         </div>
-                                        <input type="text" className="form-control" id="nombre" name="nombre" placeholder="Nombre y Apellido" required />
+                                        <input type="text" className="form-control" id="nombre" name="nombre" placeholder="Manas Sinkar" required />
                                     </div>
                                 </div>
                                 <div className="form-group">
@@ -47,7 +47,7 @@ const Contact = () => {
                                         <div className="input-group-prepend">
                                             <div className="input-group-text"><i className="fa fa-envelope text-info"></i></div>
                                         </div>
-                                        <input type="email" className="form-control" id="nombre" name="email" placeholder="ejemplo@gmail.com" required />
+                                        <input type="email" className="form-control" id="nombre" name="email" placeholder="manas.sinkar@gmail.com" required />
                                     </div>
                                 </div>
 
@@ -56,7 +56,7 @@ const Contact = () => {
                                         <div className="input-group-prepend">
                                             <div className="input-group-text"><i className="fa fa-comment text-info"></i></div>
                                         </div>
-                                        <textarea className="form-control" placeholder="Envianos tu Mensaje" required></textarea>
+                                        <textarea className="form-control" placeholder="Comment" required></textarea>
                                     </div>
                                 </div>
 
