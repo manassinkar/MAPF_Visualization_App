@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import Node from './Node/Node';
-import axios from 'axios';
+// import axios from 'axios';
 import { dijkstra /* getNodesInShortestPathOrder */} from '../algorithms/dijkstra';
 import '../App.css';
 import './PathfindingVisualizer.css';
@@ -212,7 +212,7 @@ export default class PathfindingVisualizer extends Component {
   }
 
   async makeApiCalls() {
-    /* const colours = ['Aqua','Blue','Brown','Chocolate','DarkBlue','DarkCyan','DarkGoldenRod','DarkGreen','DarkMagenta','Indigo','OrangeRed','Sienna','Red','Green','BlueViolet','CornflowerBlue','Crimson','DarkGray','DeepPink','Fuchsia']
+    /* const colours = ['Maroon','Blue','Brown','Chocolate','DarkBlue','DarkCyan','DarkGoldenRod','DarkGreen','DarkMagenta','Indigo','OrangeRed','Sienna','Red','Green','BlueViolet','CornflowerBlue','Crimson','DarkGray','DeepPink','Fuchsia']
     const numAgents = this.state.numAgents;
     let response = await axios('http://127.0.0.1:8000/app/maze');
     let initialMaze = response.data.maze;
@@ -303,12 +303,9 @@ export default class PathfindingVisualizer extends Component {
     const {grid, mouseIsPressed} = this.state;
     return (
       <div className="App row">
-        
         <div className="column">
-
-        <div className="cardClass">
-            <div className="ui card" style={{margin: "0px 0px 0px 0px", 
-  width: "80%", textAlign: "center"}}>
+          <div className="cardClass">
+            <div className="ui card" style={{margin: "0px 0px 0px 0px", width: "80%", textAlign: "center"}}>
               <div className="content">
                 <div className="header">Path Finding Visualizer!!</div>
                 <div className="meta"></div>
@@ -319,7 +316,6 @@ export default class PathfindingVisualizer extends Component {
               </div>
             </div>
           </div>
-
         <div className="formParentDiv">
           <form className="ui form formClass" onSubmit={this.handleFormSubmit}>
             <div className="field">
@@ -338,10 +334,10 @@ export default class PathfindingVisualizer extends Component {
         </div>
       
       <div className="buttonClass">
-            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)} >
+            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)}>
              Get the Grid!
-           </button>
-            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.visualizePath()} style={{ marginLeft: "10px"}}>
+            </button>
+            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.visualizePath()}>
              Visualize Path!
            </button>
         
