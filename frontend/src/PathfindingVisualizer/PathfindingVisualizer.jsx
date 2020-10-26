@@ -10,10 +10,10 @@ export default class PathfindingVisualizer extends Component {
     super();
     this.state = {
       grid: [],
-      start: null,
-      end: null,
       mouseIsPressed: false,
-      numAgents: 1
+      numAgents: 1,
+      disableVisualize: true,
+      disableGetGrid: false
     };
   }
 
@@ -275,7 +275,11 @@ export default class PathfindingVisualizer extends Component {
     } */
     // console.log(stateObject)
 
-    await this.setState(stateObject);
+    setTimeout(() =>
+    {
+      stateObject['disableGetGrid'] = false;
+      this.setState(stateObject);
+    },2000)
 
   }
 
@@ -285,18 +289,25 @@ export default class PathfindingVisualizer extends Component {
   }
 
   handleMouseDown(row, col) {
-    const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
-    this.setState({grid: newGrid, mouseIsPressed: true});
+    // const newGrid = getNewGridWithWallToggled(this.state.grid, row, col);
+    // this.setState({grid: newGrid, mouseIsPressed: true});
   }
 
   setInitialGrid = (draw) => {
     const grid = getInitialGrid(draw,this.state);
-    this.setState({grid: grid});
+    this.setState({grid: grid, disableVisualize:false, disableGetGrid:true }); 
   }
 
-  clearWalls = () => {
-    const grid = clearGrid();
-    this.setState({grid: grid})
+  resetState = () => {
+    let state = {
+      grid: [],
+      mouseIsPressed: false,
+      numAgents: 1,
+      disableVisualize: true,
+      disableGetGrid: true
+    };
+    this.setState(state);
+    this.makeApiCalls();
   }
 
   handleFormSubmit = (event) => {
@@ -322,7 +333,7 @@ export default class PathfindingVisualizer extends Component {
             </div>
           </div>
         <div className="formParentDiv">
-          <form className="ui form formClass" onSubmit={this.handleFormSubmit} style={{height: "100px", marginBottom: "80px"}}>
+          <form className="ui form formClass"  onSubmit={this.handleFormSubmit} style={{height: "100px", marginBottom: "80px"}}>
             <div className="field">
               <label>Agents</label>
               <input type="number" 
@@ -332,11 +343,11 @@ export default class PathfindingVisualizer extends Component {
                       let val =  e.target.value;
                       if(val<1 || val>20)
                       {
-                        console.log("Test FormSubmit",this.formSubmit);
+                        console.log("Test FormSubmit");
                       }
                       else
                       {
-                        this.setState({numAgents: val})
+                        this.setState({numAgents: Number(val)})
                       }
                     }}
                     />
@@ -344,22 +355,23 @@ export default class PathfindingVisualizer extends Component {
           <button className="ui blue button"
                   type="submit"
                   value={this.state.numAgents}
-                  >{this.state.numAgents}</button>
+                  disabled={this.state.numAgents==null || this.state.disableGetGrid}
+                  >Run for {this.state.numAgents} Agents</button>
           </form>
         </div>
       
       <div className="buttonClass">
-            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)} style={{marginRight: "20px"}}>
-             Get the Grid!
+            <button className="ui blue button" disabled={(this.state.agents!==undefined && this.state.agents.length!==this.state.numAgents) || this.state.disableGetGrid} onClick={() => this.setInitialGrid(this.state.grid)} style={{marginRight: "20px"}}>
+             Show the Grid!
             </button>
-            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.visualizePath()}>
-             Visualize Path!
+            <button className="ui blue button" disabled={this.state.disableVisualize} onClick={() => this.visualizePath()}>
+             Visualize!
            </button>
         
       </div>
 
-      <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.clearWalls()} style={{margin: "20px"}}>
-             Clear Walls
+      <button className="ui red button" disabled={!this.state.agents} onClick={() => this.resetState()} style={{margin: "20px"}}>
+             Reset
             </button>
 
       </div>
@@ -414,19 +426,6 @@ const getInitialGrid = (drawGrid,state) => {
       grid[s[0]][s[1]].isStart = true;
       grid[e[0]][e[1]].isFinish = true;
     })
-  return grid;
-};
-
-const clearGrid = () => {
-  const grid = [];
-  for (let row = 0; row < 50; row++) {
-    const currentRow = [];
-    for (let col = 0; col < 50; col++) {
-      currentRow.push(createNode(col, row, false));
-    }
-    grid.push(currentRow);
-  }
-  
   return grid;
 };
 
