@@ -306,6 +306,7 @@ export default class PathfindingVisualizer extends Component {
       disableVisualize: true,
       disableGetGrid: true
     };
+    document.getElementById("agentForm").reset();
     this.setState(state);
     this.makeApiCalls();
   }
@@ -333,7 +334,7 @@ export default class PathfindingVisualizer extends Component {
             </div>
           </div>
         <div className="formParentDiv">
-          <form className="ui form formClass"  onSubmit={this.handleFormSubmit} style={{height: "100px", marginBottom: "80px"}}>
+          <form id="agentForm" className="ui form formClass" onSubmit={this.handleFormSubmit} style={{height: "100px", marginBottom: "80px"}}>
             <div className="field">
               <label>Agents</label>
               <input type="number" 
