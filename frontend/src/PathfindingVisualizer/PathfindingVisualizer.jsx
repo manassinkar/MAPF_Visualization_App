@@ -294,6 +294,11 @@ export default class PathfindingVisualizer extends Component {
     this.setState({grid: grid});
   }
 
+  clearWalls = () => {
+    const grid = clearGrid();
+    this.setState({grid: grid})
+  }
+
   handleFormSubmit = (event) => {
     event.preventDefault();
     this.makeApiCalls();
@@ -317,7 +322,7 @@ export default class PathfindingVisualizer extends Component {
             </div>
           </div>
         <div className="formParentDiv">
-          <form className="ui form formClass" onSubmit={this.handleFormSubmit}>
+          <form className="ui form formClass" onSubmit={this.handleFormSubmit} style={{height: "100px", marginBottom: "80px"}}>
             <div className="field">
               <label>Agents</label>
               <input type="number" 
@@ -344,7 +349,7 @@ export default class PathfindingVisualizer extends Component {
         </div>
       
       <div className="buttonClass">
-            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)}>
+            <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.setInitialGrid(this.state.grid)} style={{marginRight: "20px"}}>
              Get the Grid!
             </button>
             <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.visualizePath()}>
@@ -352,6 +357,10 @@ export default class PathfindingVisualizer extends Component {
            </button>
         
       </div>
+
+      <button className="ui blue button" disabled={!this.state.agents} onClick={() => this.clearWalls()} style={{margin: "20px"}}>
+             Clear Walls
+            </button>
 
       </div>
         <div className="grid column">
@@ -405,6 +414,19 @@ const getInitialGrid = (drawGrid,state) => {
       grid[s[0]][s[1]].isStart = true;
       grid[e[0]][e[1]].isFinish = true;
     })
+  return grid;
+};
+
+const clearGrid = () => {
+  const grid = [];
+  for (let row = 0; row < 50; row++) {
+    const currentRow = [];
+    for (let col = 0; col < 50; col++) {
+      currentRow.push(createNode(col, row, false));
+    }
+    grid.push(currentRow);
+  }
+  
   return grid;
 };
 
