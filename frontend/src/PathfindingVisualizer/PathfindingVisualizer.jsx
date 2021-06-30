@@ -212,51 +212,51 @@ export default class PathfindingVisualizer extends Component {
   }
 
   async makeApiCalls() {
-    /* const colours = ['Maroon','Blue','Brown','Chocolate','DarkBlue','DarkCyan','DarkGoldenRod','DarkGreen','DarkMagenta','Indigo','OrangeRed','Sienna','Red','Green','BlueViolet','CornflowerBlue','Crimson','DarkGray','DeepPink','Fuchsia']
-    const numAgents = this.state.numAgents;
-    let response = await axios('http://127.0.0.1:8000/app/maze');
-    let initialMaze = response.data.maze;
+    // const colours = ['Maroon','Blue','Brown','Chocolate','DarkBlue','DarkCyan','DarkGoldenRod','DarkGreen','DarkMagenta','Indigo','OrangeRed','Sienna','Red','Green','BlueViolet','CornflowerBlue','Crimson','DarkGray','DeepPink','Fuchsia']
+    // const numAgents = this.state.numAgents;
+    // let response = await axios('http://127.0.0.1:8000/app/maze');
+    // let initialMaze = response.data.maze;
 
-    let startEndPromiseArray = [];
-    for(var i=0; i<numAgents; i++){
-      startEndPromiseArray.push(axios.post('http://127.0.0.1:8000/app/startend/', {
-        maze: JSON.stringify(initialMaze)
-      },{headers: {'Content-Type': 'application/json'}}));
-    }
-    var startEndData = await Promise.all(startEndPromiseArray);
-    startEndData = startEndData.map(elem => { return { start: elem.data.start,end: elem.data.end, length: elem.data.length } });
-    let astarLength = startEndData.map(elem => { return elem.length })
-    console.log("startend data ",startEndData);
+    // let startEndPromiseArray = [];
+    // for(var i=0; i<numAgents; i++){
+    //   startEndPromiseArray.push(axios.post('http://127.0.0.1:8000/app/startend/', {
+    //     maze: JSON.stringify(initialMaze)
+    //   },{headers: {'Content-Type': 'application/json'}}));
+    // }
+    // var startEndData = await Promise.all(startEndPromiseArray);
+    // startEndData = startEndData.map(elem => { return { start: elem.data.start,end: elem.data.end, length: elem.data.length } });
+    // let astarLength = startEndData.map(elem => { return elem.length })
+    // console.log("startend data ",startEndData);
 
-    let movesArray = [];
-    startEndData.forEach(element => {
-      let s = element.start;
-      let e = element.end;
-      movesArray.push(axios.post('http://127.0.0.1:8000/', {
-        maze: JSON.stringify(initialMaze),
-        start: JSON.stringify(s),
-        end: JSON.stringify(e)
-      },{headers: {'Content-Type': 'application/json'}}));
-    })
-    console.log(movesArray.length);
-    var result = await Promise.all(movesArray);
-    result = result.map(res => { return { start: res.data.start, end: res.data.end, moves: res.data.moves } });
-    let resultLength = result.map(res => { return res.moves.length });
+    // let movesArray = [];
+    // startEndData.forEach(element => {
+    //   let s = element.start;
+    //   let e = element.end;
+    //   movesArray.push(axios.post('http://127.0.0.1:8000/', {
+    //     maze: JSON.stringify(initialMaze),
+    //     start: JSON.stringify(s),
+    //     end: JSON.stringify(e)
+    //   },{headers: {'Content-Type': 'application/json'}}));
+    // })
+    // console.log(movesArray.length);
+    // var result = await Promise.all(movesArray);
+    // result = result.map(res => { return { start: res.data.start, end: res.data.end, moves: res.data.moves } });
+    // let resultLength = result.map(res => { return res.moves.length });
 
-    var sum = 0;
-    for(i=0;i<numAgents;i++)
-    {
-      sum += resultLength[i] - astarLength[i];
-    }
-    console.log("On an average it is taking",sum/numAgents,"extra moves by our solution with respect to astar algorithm individually");
+    // var sum = 0;
+    // for(i=0;i<numAgents;i++)
+    // {
+    //   sum += resultLength[i] - astarLength[i];
+    // }
+    // console.log("On an average it is taking",sum/numAgents,"extra moves by our solution with respect to astar algorithm individually");
 
-    for(i=0;i<result.length;i++)
-    {
-      result[i]['colour'] = colours[i];
-    }
+    // for(i=0;i<result.length;i++)
+    // {
+    //   result[i]['colour'] = colours[i];
+    // }
 
-    console.log("result ",result);
- */
+    // console.log("result ",result);
+ 
     let numberOfAgents = this.state.numAgents;
     let statesAll = require('./statesAll.json');
     let stateList = statesAll[numberOfAgents];
